@@ -1,0 +1,31 @@
+# mcp-rec
+
+> VCR for the Model Context Protocol. Record any MCP server's traffic to a JSONL file, then replay it deterministically — for tests, bug reports, offline demos, and regression bisection.
+
+## Install
+```
+pip install mcp-rec
+# or
+uvx mcp-rec --help
+```
+
+Zero dependencies. Pure Python ≥3.10.
+
+## Two commands
+
+```bash
+mcp-rec record -o session.jsonl -- <command> [args...]
+mcp-rec replay session.jsonl
+```
+
+`record` spawns your MCP server as a subprocess, transparently forwards every JSON-RPC byte between your MCP client and the server, and appends every message in both directions to the JSONL file.
+
+`replay` reads that JSONL and speaks MCP itself: for each incoming request it matches by `(method, params)` and returns the recorded response with the caller's id rewritten in.
+
+## Use cases for an AI agent
+- Reproducing a bug another agent saw — load the JSONL the other agent attached and replay it.
+- CI tests for your own MCP server — record one happy path, replay in tests, assert correct behavior without hitting upstream APIs.
+- Offline demos — record once, demo anywhere.
+
+## Related
+- https://github.com/yubinkim444/ai-first-scraper-mcp — sample MCP server to record against.
